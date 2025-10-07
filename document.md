@@ -8,37 +8,6 @@ In-App Purchasing (IAP、アプリ内課金) を有効にする方法を説明�
 - ユーザーがゲーム内でアイテムを購入するのを可能にします。 
 - ストアに接続することで、購入による収益を得ることができます。<p>
 
-## 手順
-- このゲームのアプリ内課金戦略を定義します。
-
-- プロジェクトを Unity のサービスとして設定します。
-
-- IAP をアクティベートして、自動的にパッケージをインストールします。
-
-- 設定を行います。
-
-- 販売したいゲーム内アイテムを作成し、カタログ化します。
-
-- Codeless IAP ボタンを使って、ユーザーにアイテムを購入する方法を提供します。ロジックが動作するようになったら、ボタンの外観をカスタマイズすることを検討してください。また、このプロセスを強化するために、リッチ API 用のスクリプトされた IAP を使用することもできます。
-
-- アプリケーションを、Google、Apple、Android などの関連アプリストアに接続します。
-
-- ストアにアイテムを加えます。
-
-- すべてをまとめます。
-
-- このドキュメント、サポート、および IAP フォーラムのガイダンスを参考にして、IAP を設定します。
-- 全てをテストします。
-- ライブにします。
-
-### はじめに
-1. Unityプロジェクトを開く
-2. Window > General > Services を選びます。Services ウィンドウが表示されます。
-3. プロジェクト ID を作成し、そのプロジェクトを組織に接続します。
-4. COPPA のコンプライアンスに関する質問に答えます。
-5. Services ウィンドウには、サービスの一覧が表示されます。In-App Purchasing をクリックします。
-
-
 ### はじめに
 1. Unityプロジェクトを開く
 2. Window > Package Managerを選びます。Package Manager ウィンドウが表示されます。
@@ -197,4 +166,37 @@ PurchaseManagerにIAP Buttonを追加して、同じProductIDを選択したら
 Restore設定したIAP ButtonのOnTransactionsRestoredには
 PurchaseManagerのTransactionsResultを設定する．
 
+<div align="center">
+  <img src="images/unity11.png" alt="IAPインストール画面">
+</div>
+
 Buttonにはヒエラルキー上にUIのRestoreButtonを作成して、それをアタッチする．
+
+そうするとRestoreButtonが押された時にIAP Buttonの方の処理が走りリストアされ
+OnTransactionsRestoredのイベントがコールバックする．
+
+<div align="center">
+  <img src="images/unity12.png" alt="IAPインストール画面">
+</div>
+
+リストアの処理は、GoogleとAppleで違いがあり、Googleの場合は
+自動でリストア処理が走るのでリストアボタンを設置しない．
+このため起動している端末がどちらのなのかを判定して、Androidだったら
+リストアボタンを非表示にする処理は自分で作らないといけない．
+iOSの場合は、自動リストア処理は走らないので、ユーザーが自分で
+リストアボタンを押さない限り、リストアされない．
+
+なお、リストア成功すると、課金成功時と同じOnPurchaseCompleteが呼ばれます。
+リストアの成否によって何か処理をする場合は、OnTransactionsRestoredのBooleanを
+成否判定してそれぞれ処理を記載しよう．
+
+## ストア側の設定(Google Play)
+ストア側に同じProductIDの商品を登録する．
+GooglePlayの場合、先にビルドをアップしないと課金アイテムを登録できないので
+審査が不要な内部テストにアップロードしておきましょう．
+
+GooglePlayConsoleに登録できていないため，途中．
+
+## ストア側の設定(Apple Store)
+AppleStoreConnectでアプリを登録後、そのアプリのアプリ内課金メニューから商品を登録できます.
+
