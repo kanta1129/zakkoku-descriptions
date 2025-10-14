@@ -196,19 +196,3 @@ iOSの場合は、自動リストア処理は走らないので、ユーザー�
 リストアの成否によって何か処理をする場合は、OnTransactionsRestoredのBooleanを
 成否判定してそれぞれ処理を記載しよう．
 
-## ストア側の設定(Google Play)
-ストア側に同じProductIDの商品を登録する．
-GooglePlayの場合、先にビルドをアップしないと課金アイテムを登録できないので
-審査が不要な内部テストにアップロードしておきましょう．
-
-<div align="center">
-  <img src="images/unity13.png" alt="IAPインストール画面">
-</div>
-
-<div align="center">
-  <img src="images/unity14.png" alt="IAPインストール画面">
-</div>
-
-## ストア側の設定(Apple Store)
-AppleStoreConnectでアプリを登録後、そのアプリのアプリ内課金メニューから商品を登録できます.
-

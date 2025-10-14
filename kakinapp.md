@@ -1,6 +1,7 @@
 # iOS/Android での買い切りアイテム実装（広告非表示アイテム）<p>
 ## 使用環境
-Unity:2022.3.44f1
+Unity:2022.3.44f1<p>
+参考にしたサイト：
 
 ## 概要
 1. Unity IAPのセットアップ
@@ -17,6 +18,7 @@ document.mdを参照<p>
 
 ## 3.購入処理スクリプトの作成
 IAPManager.cs
+
 ~~~
 using UnityEngine;
 using UnityEngine.Purchasing;
