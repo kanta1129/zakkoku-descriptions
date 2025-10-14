@@ -8,7 +8,7 @@ Unity:2022.3.44f1<p>
 - ユーザーがゲーム内でアイテムを購入するのを可能にします。 
 - ストアに接続することで、購入による収益を得ることができます。<p>
 
-1. はじめに
+1. はじめに(15に追記)
 2. IAPcatalogの設定
 3. 課金機能の実施
 
@@ -20,6 +20,17 @@ Package Manager一覧からIn-App Purchasing(IAP)をインストールします<
 <div align="center">
   <img src="images/unity2.png" alt="IAPインストール画面">
 </div>
+
+10月15日追記
+追記で，IAPサービスの有効化が必要．
+1. Services > In-App Purchasing を選択し、設定画面を開きます．
+2. Unity Gaming Servicesとの連携を求められた場合は、プロジェクトをリンクしてください．
+In-App Purchasing を ON に設定します．
+
+<div align="center">
+  <img src="images/unity15.png" alt="IAPの有効化">
+</div>
+現在，Storeと連携していないので，ここはできていません．
 
 ## 2.IAPcatalogの設定
 Unity上で商品設定を行います。
