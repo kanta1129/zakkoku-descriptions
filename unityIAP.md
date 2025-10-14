@@ -1,21 +1,27 @@
 # Unity IAPの導入方法，実装例<p>
 ## 使用環境
-Unity:2022.3.44f1
+Unity:2022.3.44f1<p>
+参考URL：https://tomi-no-tubuyaki.com/game-develop/unity/unity-%E9%9D%9E%E6%B6%88%E8%B2%BB%E5%9E%8B%E8%AA%B2%E9%87%91%E3%82%A2%E3%82%A4%E3%83%86%E3%83%A0%EF%BC%88%E5%BA%83%E5%91%8A%E5%89%8A%E9%99%A4%E3%81%AA%E3%81%A9%EF%BC%89%E3%81%AE%E5%AE%9F%E8%A3%85/
 
 ## 概要
-In-App Purchasing (IAP、アプリ内課金) を有効にする方法を説明します。<p>
-コード化されたアプローチとコードを使わない方法が用意されており、以下を行うことができます。 
+以下を行うことができます。 
 - ユーザーがゲーム内でアイテムを購入するのを可能にします。 
 - ストアに接続することで、購入による収益を得ることができます。<p>
 
-### はじめに
-1. Unityプロジェクトを開く
-2. Window > Package Managerを選びます。Package Manager ウィンドウが表示されます。
-3. Package Manager一覧からIn-App Purchasing(IAP)をインストールします
+1. はじめに
+2. IAPcatalogの設定
+3. 課金機能の実施
 
-    ![IAPインストール画面](images/unity2.png)
+## 1.はじめに
+Unityプロジェクトを開く<p>
+Window > Package Managerを選びます。Package Manager ウィンドウが表示されます。<p>
+Package Manager一覧からIn-App Purchasing(IAP)をインストールします<p>
 
-### IAPcatalogの設定
+<div align="center">
+  <img src="images/unity2.png" alt="IAPインストール画面">
+</div>
+
+## 2.IAPcatalogの設定
 Unity上で商品設定を行います。
 
 後にストアに商品を設定する時は、このカタログのIDと同じにする必要があります。
@@ -195,7 +201,13 @@ iOSの場合は、自動リストア処理は走らないので、ユーザー�
 GooglePlayの場合、先にビルドをアップしないと課金アイテムを登録できないので
 審査が不要な内部テストにアップロードしておきましょう．
 
-GooglePlayConsoleに登録できていないため，途中．
+<div align="center">
+  <img src="images/unity13.png" alt="IAPインストール画面">
+</div>
+
+<div align="center">
+  <img src="images/unity14.png" alt="IAPインストール画面">
+</div>
 
 ## ストア側の設定(Apple Store)
 AppleStoreConnectでアプリを登録後、そのアプリのアプリ内課金メニューから商品を登録できます.
