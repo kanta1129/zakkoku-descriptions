@@ -6,6 +6,8 @@
 - Package Name (Android) / Bundle Identifier (iOS): アプリの固有IDです．通常，com.会社名.アプリ名 の形式で設定します．他のアプリと重複しないように注意してください．(例：com.mycompany.counterapp)<p>
 
 ## Android編
+### 1.Unityでビルド準備
+
 file>build setting
 Androidを選択し，Switch Platformを押す<p>
 player Settingの設定<p>
@@ -16,12 +18,94 @@ player Settingの設定<p>
 - Target API Level: Googleが推奨する最新レベルに設定するのが望ましいです。Automatic (highest installed)にしておくのが簡単です。<p>
 
 キーストア(Keystore)の作成<p>
-これは**「このアプリは確かにあなたが作りました」ということを証明するデジタル署名**のファイルです。非常に重要で、一度失くすとアプリの更新ができなくなります。<p>
+これは「このアプリは確かにあなたが作りました」ということを証明するデジタル署名のファイルです。非常に重要で、一度失くすとアプリの更新ができなくなります。<p>
 Player Settings > Publishing Settings を開きます。<p>
+
+<div align="center">
+  <img src="images/AppRegi/6.jpeg" alt="手順">
+</div>
+
 Keystore Manager... をクリックし、Keystore... > Create New > Anywhere を選択します。<p>
-保存場所を指定し、パスワードとエイリアス（署名の名前）、エイリアスのパスワードを設定します。このパスワードは絶対に忘れないでください。<p>
+保存場所を指定し、
+- パスワード
+- エイリアス（署名の名前）
+- エイリアスのパスワード<p>
+
+<div align="center">
+  <img src="images/AppRegi/7.png" alt="登録する箇所">
+</div>
+
+を設定します。このパスワードは絶対に忘れないでください。<p>
 作成が完了すると、Publishing Settingsの画面でキーストアとエイリアス、パスワードが自動で入力されます。<p>
 
+### 2.App Bundle(.aab)のビルド
+現在，google playストアでは，.apkファイルではなく，効率的な.aab形式のアップロードが必須になっています。<p>
+File>Build Settingを開く<p>
+Build App Bundle(google play)のチェックボックスにチェックが入っていることを確認します．<p>
+
+<div align="center">
+  <img src="images/AppRegi/8.png" alt="チェックポインと">
+</div>
+
+### 3.Google Play Consoleでアプリ登録とアップロード
+作成した.aabファイルをストアに登録します．<p>
+1. Google Play Console にログインし，「すべてのアプリ」タブから「アプリ作成」をクリック
+2. 基本情報の入力
+- アプリ名
+- 言語
+- アプリ or ゲーム
+- 有料 or 無料
+
+<div align="center">
+  <img src="images/AppRegi/9.png" alt="Store側の登録">
+</div>
+
+3. 画面の指示に従い，左上のメニューから順に埋めていきます。<p>
+- 内部テスト：
+- ゲームの設定：
+- クローズドテスト：
+- 製品版：
+
+<div align="center">
+  <img src="images/AppRegi/12.png" alt="内部テスト">
+</div>
+
+<div align="center">
+  <img src="images/AppRegi/13.png" alt="ゲームの設定">
+</div>
+
+<div align="center">
+  <img src="images/AppRegi/11.png" alt="クローズドテスト">
+</div>
+
+上記が，終了したらリリースの審査を行うことが可能．<p>
+初回のリリースには審査の時間が長く，大体３日かかるそう．<p>
+
+# 4.リリースについて詳しく
+製品版のところをクリックし，「新しいリリースを作成」をクリックしてリリースを作成する．<p>
+
+<div align="center">
+  <img src="images/AppRegi/18.png" alt="リリース１">
+</div>
+
+Unityのビルドで作成した.aabファイルをApp Bundleにアップロードします．
+リリース名を入れて「リリースのレビュー」をクリック．
+
+<div align="center">
+  <img src="images/AppRegi/15.png" alt="リリース２">
+</div>
+
+問題がなければ，「製品版として公開を開始」をクリックし，アプリをリリース．
+
+<div align="center">
+  <img src="images/AppRegi/16.png" alt="リリース３">
+</div>
+
+ステータスが審査中になれば成功
+
+<div align="center">
+  <img src="images/AppRegi/17.png" alt="リリース4">
+</div>
 
 ## IOS編
 file>build setting
