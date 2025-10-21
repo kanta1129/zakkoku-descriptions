@@ -18,19 +18,38 @@ Window > Package Managerを選びます。Package Manager ウィンドウが表�
 Package Manager一覧からIn-App Purchasing(IAP)をインストールします<p>
 
 <div align="center">
-  <img src="images/unity2.png" alt="IAPインストール画面">
+  <img src="images/iapimages/2.png" alt="IAPインストール画面">
 </div>
 
-10月15日追記
+10月20日追記
 追記で，IAPサービスの有効化が必要．
 1. Services > In-App Purchasing を選択し、設定画面を開きます．
 2. Unity Gaming Servicesとの連携を求められた場合は、プロジェクトをリンクしてください．
 In-App Purchasing を ON に設定します．
 
 <div align="center">
-  <img src="images/unity15.png" alt="IAPの有効化">
+  <img src="images/iapimages/15.png" alt="IAPの有効化">
 </div>
-現在，Storeと連携していないので，ここはできていません．
+
+### Androidの場合
+ONにすると，エラー文出てきます．
+
+## ここ写真
+
+GooglePlayのライセンスキーが設定されていないとのこと．<p>
+写真に書いてある通りに，設定を行う．<p>
+1. Google Play Consoleにサインイン
+2. アプリの選択
+3. ライセンスキーを探す．
+   - 左側のメニューから，収益化＞収益のセットアップのページを開く
+   - そのページに「ライセンス」というセッションがあり，そこに長い文字列(ライセンスキー)がある．<p>
+4. キーをコピーしてUnityに貼り付け
+   - ライセンスキーをコピー
+   - UnityのProject Setting画面に戻り，写真の「Enter key」と書かれている欄にペースト．
+   - 「Obfuscate License Keys」ボタンを押した場合，ライセンスキーを変換する→セキュリティの強化<p>
+
+「Obfuscate License Keys」ボタンの下に，「GooglePlayTangle.cs has been generated and exists in your project」と表示されればOKとのこと<p>
+「There seems ~~」のエラー文は残っていますが，気にしなくていいとのこと．<p>
 
 ## 2.IAPcatalogの設定
 Unity上で商品設定を行います。
@@ -42,13 +61,13 @@ Unity上で商品設定を行います。
 Services＞In-App Purchasing＞IAP Catalog...
 
 <div align="center">
-  <img src="images/unity3.png" alt="IAPインストール画面">
+  <img src="images/iapimages/3.png" alt="IAPインストール画面">
 </div>
 
 買い切り(広告削除：非消費型)の商品設定を行う
 
 <div align="center">
-  <img src="images/unity4.png" alt="IAPインストール画面">
+  <img src="images/iapimages/4.png" alt="IAPインストール画面">
 </div>
 
 - ID：商品のIDを入力(全部小文字)
@@ -65,7 +84,7 @@ Services＞In-App Purchasing＞IAP Catalog...
 - PriceTier(Apple)：Appleストアで販売する価格を選択
 
 <div align="center">
-  <img src="images/unity5.png" alt="IAPインストール画面">
+  <img src="images/iapimages/5.png" alt="IAPインストール画面">
 </div>
 
 <div align="center">
@@ -136,13 +155,13 @@ public class PurchaseManager : MonoBehaviour
 購入処理を行うSceneにPurchaseManagerを作成して，IAPButtonを追加．(Scriptも追加)
 
 <div align="center">
-  <img src="images/unity6.png" alt="IAPインストール画面">
+  <img src="images/iapimages/6.png" alt="IAPインストール画面">
 </div>
 
 ProductIDにIAPカタログで作成したIDを選択．
 
 <div align="center">
-  <img src="images/unity7.png" alt="IAPインストール画面">
+  <img src="images/iapimages/7.png" alt="IAPインストール画面">
 </div>
 
 OnPurchaseConfirmedのイベントにPurchaseManagerのPurchaseRemoveAds（）を設定．
@@ -150,7 +169,7 @@ OnPurchaseConfirmedのイベントにPurchaseManagerのPurchaseRemoveAds（）�
 OnPurchaseFailedのイベントにPurchaseManagerのFailedPurchaseRemoveAds（）を設定．
 
 <div align="center">
-  <img src="images/unity8.png" alt="IAPインストール画面">
+  <img src="images/iapimages/8.png" alt="IAPインストール画面">
 </div>
 
 OnProductFetchedは空のままでOK．(商品情報をストアから取得した時の処理らしい)
@@ -158,7 +177,7 @@ OnProductFetchedは空のままでOK．(商品情報をストアから取得し�
 Buttonにはヒエラルキー上にUIのPurchaseButtonを作成して、それをアタッチする．
 
 <div align="center">
-  <img src="images/unity9.png" alt="IAPインストール画面">
+  <img src="images/iapimages/9.png" alt="IAPインストール画面">
 </div>
 
 これでPurchaseButtonを押すと、端末の購入処理が呼び出されるようになりました．
@@ -177,14 +196,14 @@ PurchaseManagerにIAP Buttonを追加して、同じProductIDを選択したら
 このIAP Buttonをリストアとして使うためにButtonTypeをRestoreに変更する．
 
 <div align="center">
-  <img src="images/unity10.png" alt="IAPインストール画面">
+  <img src="images/iapimages/10.png" alt="IAPインストール画面">
 </div>
 
 Restore設定したIAP ButtonのOnTransactionsRestoredには
 PurchaseManagerのTransactionsResultを設定する．
 
 <div align="center">
-  <img src="images/unity11.png" alt="IAPインストール画面">
+  <img src="images/iapimages/11.png" alt="IAPインストール画面">
 </div>
 
 Buttonにはヒエラルキー上にUIのRestoreButtonを作成して、それをアタッチする．
@@ -193,7 +212,7 @@ Buttonにはヒエラルキー上にUIのRestoreButtonを作成して、それ�
 OnTransactionsRestoredのイベントがコールバックする．
 
 <div align="center">
-  <img src="images/unity12.png" alt="IAPインストール画面">
+  <img src="images/iapimages/12.png" alt="IAPインストール画面">
 </div>
 
 リストアの処理は、GoogleとAppleで違いがあり、Googleの場合は
