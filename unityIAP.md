@@ -11,6 +11,7 @@ Unity:2022.3.44f1<p>
 1. はじめに(15に追記)
 2. IAPcatalogの設定
 3. 課金機能の実施
+4. Storeの設定(課金アイテム)
 
 ## 1.はじめに
 Unityプロジェクトを開く<p>
@@ -90,6 +91,11 @@ Services＞In-App Purchasing＞IAP Catalog...
 <div align="center">
     <a>こんな感じ</a>
 </div>
+
+## 追加：ADS簡単に設定
+Unity Cloudで設定，Product＞Unity Ads Monetizationを選択
+
+
 
 ## 課金機能の実装
 
@@ -226,3 +232,77 @@ iOSの場合は、自動リストア処理は走らないので、ユーザー�
 リストアの成否によって何か処理をする場合は、OnTransactionsRestoredのBooleanを
 成否判定してそれぞれ処理を記載しよう．
 
+## 4.課金アイテムのストア設定
+### Android編
+まず，ストア側に同じProductIDの商品を登録する．
+
+先に，ビルドしたものをアップしないと課金アイテムの登録ができないので審査が不要な「内部テスト」にアップロードする．
+
+<div align="center">
+  <img src="images/iapimages/16.png" alt="内部テスト画面">
+</div>
+
+テスターの選択→リリースの作成→リリースの確認の流れになります．(ここから自分で確認はできていません)
+
+内部テストにリリースが完了したら，新規商品を追加します．
+
+商品→アプリ内アイテムです．
+
+<div align="center">
+  <img src="images/iapimages/17.png" alt="課金アイテム登録(ストア内)">
+</div>
+
+ここで，アイテムIDには，IAPカタログで作成したProduct IDを設定します．
+
+名前も説明もIAPカタログで作成したものと同じです．「価格を設定」を押して販売価格を設定します．
+
+今回は買い切りアイテムなので，複数数量はチェックしません．
+
+<div align="center">
+  <img src="images/iapimages/18.png" alt="課金アイテム登録(ストア内)">
+</div>
+
+<div align="center">
+  <img src="images/iapimages/19.png" alt="課金アイテム登録(ストア内)">
+</div>
+
+日本円でいくらか手動で設定します．海外で購入する際の価格は，自動的に変換されるので，円だけで大丈夫．
+
+これで，商品の追加ができたので，実機テストでPurchaseButtonを押してGooglePlayの購入ポップが表示されれば成功！！！
+
+### IOSの設定
+App Store Connectにアプリを登録後，そのアプリ内課金メニューから商品を登録できる．
+
+<div align="center">
+  <img src="images/iapimages/20.png" alt="課金アイテム登録(ストア内)">
+</div>
+
+項目をそれぞれ説明すると，種類は買い切りなので非消耗型．参照名は，売り上げレポートを見る際の名称．製品IDはIAPカタログのProductIDと一緒です．
+
+<div align="center">
+  <img src="images/iapimages/21.png" alt="課金アイテム登録(ストア内)">
+</div>
+
+作成が完了すると，審査前の下書きの状態で登録される．次に，配信する国と価格を設定する．
+
+<div align="center">
+  <img src="images/iapimages/22.png" alt="課金アイテム登録(ストア内)">
+</div>
+
+国については，デフォルトで全てであり，配信しない国があればチェックを外す．
+
+<div align="center">
+  <img src="images/iapimages/23.png" alt="課金アイテム登録(ストア内)">
+</div>
+
+価格の設定を行う．価格を押すとリストが出るのでそこから選択．下の「他の価格を確認」があるが，これは価格の刻みが細かくなったものである．
+
+AppStoreに課金アイテムを追加する際に審査が必要になる．その時に，スクリーンショットが必要なる．これは，購入ボタンが表示されている画面でいいそう．
+
+スクリーンショットはAppleの指定のサイズを守らないとアップできないので注意．(参考：https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications)
+
+メモには，どういうアイテムか説明することが必要．
+
+ここまでで，アプリ内課金アイテムの追加が終わると，実機でテストできるようになるので，ビルドをストアにアップして実際に購入できるか試すことができる．
+
+## 注意：Unity上でIAPカタログの設定で価格も設定したと思いますが，あれはテスト用・開発のメモ用なので，実際はストアの価格が使われます．
