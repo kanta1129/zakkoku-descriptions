@@ -1,7 +1,12 @@
-# Unity IAPの導入方法，実装例<p>
+# Unity IAPの導入方法，実装例→ストアの課金アイテム設定<p>
 ## 使用環境
 Unity:2022.3.44f1<p>
-参考URL：https://tomi-no-tubuyaki.com/game-develop/unity/unity-%E9%9D%9E%E6%B6%88%E8%B2%BB%E5%9E%8B%E8%AA%B2%E9%87%91%E3%82%A2%E3%82%A4%E3%83%86%E3%83%A0%EF%BC%88%E5%BA%83%E5%91%8A%E5%89%8A%E9%99%A4%E3%81%AA%E3%81%A9%EF%BC%89%E3%81%AE%E5%AE%9F%E8%A3%85/
+参考URL：
+- https://miuragames.com/Tech/Unity-billing#index_A5DUZcMn
+- https://study-topia.youtopia-web.com/how-to-unity-iap-by-ios/
+- https://zenn.dev/dara/scraps/7b8e7bbc305465
+- https://qiita.com/Masataka-n/items/6f98a5a9fee7b28ccd1f
+- https://tomi-no-tubuyaki.com/game-develop/unity/unity-%E9%9D%9E%E6%B6%88%E8%B2%BB%E5%9E%8B%E8%AA%B2%E9%87%91%E3%82%A2%E3%82%A4%E3%83%86%E3%83%A0%EF%BC%88%E5%BA%83%E5%91%8A%E5%89%8A%E9%99%A4%E3%81%AA%E3%81%A9%EF%BC%89%E3%81%AE%E5%AE%9F%E8%A3%85/
 
 ## 概要
 以下を行うことができます。 
@@ -11,7 +16,8 @@ Unity:2022.3.44f1<p>
 1. はじめに(15に追記)
 2. IAPcatalogの設定
 3. 課金機能の実施
-4. Storeの設定(課金アイテム)
+4. 課金アイテムのストア設定
+5. 審査時に注意するポイント
 
 ## 1.はじめに
 Unityプロジェクトを開く<p>
@@ -270,7 +276,48 @@ iOSの場合は、自動リストア処理は走らないので、ユーザー�
 
 これで，商品の追加ができたので，実機テストでPurchaseButtonを押してGooglePlayの購入ポップが表示されれば成功！！！
 
+### Androidの実機テスト導入
+まず，Unity HubからプロジェクトにUnity Build Supportがインストールされているか確認する．
+
+次に端末の設定画面を開く．
+
+<div align="center">
+  <img src="images/iapimages/28.png" alt="実機の設定">
+</div>
+
+設定から開発者向けオプションを選択する．
+
+<div align="center">
+  <img src="images/iapimages/29.png" alt="実機の設定">
+</div>
+
+開発者モードをONにするだけで端末の設定は完了！．
+
+<div align="center">
+  <img src="images/iapimages/30.png" alt="実機の設定">
+</div>
+
+後は，PCと実機をUSBで接続し，UnityでBuild And Runで実行すれば自動でアプリがたちあがります！(保存画面が表示されるのですが、このときAsset以外の場所で保存するように，エラーが起こるっぽいです)
+
 ### IOSの設定
+
+そもそも・・・<p>
+
+### Apple Developer Programとは
+apple store connectの利用にはApple Developer Programへの参加が必須．開発関連リソースや証明書の取得、アプリの配信審査申請、TestFlightによるベータ配信、APIの活用など、すべての機能が利用可能．<p>
+### App Store Connectとは
+Appleが提供する公式アプリ管理プラットフォーム．iPhoneやiPad，Mac向けアプリの提出，配信，更新作業を一元管理できる．開発者や事業者は，このサービスを通じてアプリの配信設定，審査申請，メタデータや課金情報の編集，売上・利用状況の詳細レポート管理まで幅広く対応可能<p>
+
+この二つの設定が必要になる．<p>
+
+### 「App Store Connect」で口座登録(重要らしいです)
+<div align="center">
+  <img src="images/iapimages/27.png" alt="iosの設定3">
+</div>
+「App Store Connect」の「契約」を開き、「無料アプリ」「有料アプリ」それぞれステータスが「アクティブ」になっていないと、実機で課金テストを行なっても初期化エラーとなりテストが出来ないので必ず行う！<p>
+必ず「口座情報」だけではなく「納税フォーム」の申請を行なってください。(ここまで行わないと初期化エラーが発生する)<p>
+納税フォーム：https://developer.apple.com/jp/help/app-store-connect/manage-tax-information/provide-tax-information/<p>
+
 App Store Connectにアプリを登録後，そのアプリ内課金メニューから商品を登録できる．
 
 <div align="center">
@@ -305,4 +352,29 @@ AppStoreに課金アイテムを追加する際に審査が必要になる．そ
 
 ここまでで，アプリ内課金アイテムの追加が終わると，実機でテストできるようになるので，ビルドをストアにアップして実際に購入できるか試すことができる．
 
+### 「App Store Connect」でSandboxアカウントの登録(ここから実機テスト用)
+「ユーザーとアクセス」をクリックし、「Sandbox」を選択し、「＋」ボタンからテストアカウントを追加してください。<p>
+<div align="center">
+  <img src="images/iapimages/24.png" alt="sandbox">
+</div>
+「＋」ボタンを押すと「新規テスター」画面が表示されます.こちらに必要な情報を入力してください．
+尚、メールアドレスに関しては実際に存在しないメールアドレスでも良いそうです.実機でテストしたいときに利用？．
+<div align="center">
+  <img src="images/iapinages/25.png" alt="sandbox2">
+</div>
+
+iPhoneで「設定」→「App Store」を開き、Sandboxの欄に「サインイン」が表示されるので、先ほど作成したアカウントでログインを行います。<p>
+
+<div align="center">
+  <img src="images/iapimages/26.png" alt="sandboxにiphoneでログイン">
+</div>
+
+SANDBOX環境に正常にログインできた場合、これで、Unityでアプリをビルドして、Xcodeで実機にインストールすれば、課金テストを行えるようになります。<p>
+
 ## 注意：Unity上でIAPカタログの設定で価格も設定したと思いますが，あれはテスト用・開発のメモ用なので，実際はストアの価格が使われます．
+
+## 5.審査時に注意するポイント
+- リストア（購入の復元）機能は必ず実装する（特にiOSの買い切りアイテムでは必須）。
+- 価格と購入内容をユーザーに明確に表示する。
+- 全ての機能が正常に動作する（リンク切れやクラッシュがない）。
+- 審査員がテストできるようにする（テスト用の情報や操作手順をメモに記載する）。
