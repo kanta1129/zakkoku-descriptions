@@ -41,7 +41,9 @@ In-App Purchasing を ON に設定します．
 ### Androidの場合
 ONにすると，エラー文出てきます．
 
-## ここ写真
+<div align="center">
+  <img src="images/iapimages/31.png" alt="エラー文表示">
+</div>
 
 GooglePlayのライセンスキーが設定されていないとのこと．<p>
 写真に書いてある通りに，設定を行う．<p>
