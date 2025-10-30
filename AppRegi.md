@@ -12,7 +12,7 @@ file>build setting
 Androidを選択し，Switch Platformを押す<p>
 player Settingの設定<p>
 
-- Package Name (パッケージ名): アプリの固有IDです。com.会社名.アプリ名 の形式で、全世界でユニークなIDを設定します（例: com.kanta.MyNiceApp）。
+- Package Name (パッケージ名): アプリの固有IDです。com.会社名.アプリ名 の形式で、全世界でユニークなIDを設定します（例: com.kanta.MyNiceApp）Edit > Project Settings > Player > Other Settings > Identification > Package Name。
 - Version: ユーザーに見えるバージョン名です（例: 1.0）。
 - Bundle Version Code: ストアが新旧を判断するための内部的な番号です。アプリを更新するたびに、必ず1ずつ増やしてください（例: 1 → 2）。
 - Target API Level: Googleが推奨する最新レベルに設定するのが望ましいです。Automatic (highest installed)にしておくのが簡単です。<p>
@@ -111,8 +111,18 @@ Unityのビルドで作成した.aabファイルをApp Bundleにアップロー�
 
 ## IOS編
 file>build setting
-iosを選択し，Switch Platformを押す
+iosを選択し，Switch Platformを押す.
+
+以下の項目を設定
+- Company name
+- Product name
+- Version
+- Defalt Icon
+- Oriebntation:縦持ちor横持ち
 Buildボタンを押し，保存先とファイル名を指定
+
+Xcodeで起動するときに，広告を入れたゲームだとエラーが発生する可能性がある
+
 XcodeプロジェクトをMacで開き，実機テストやAppStoreに申請ができる．
 
 ### 1.App Store Connectでアプリの箱を作る

@@ -100,11 +100,6 @@ Services＞In-App Purchasing＞IAP Catalog...
     <a>こんな感じ</a>
 </div>
 
-## 追加：ADS簡単に設定
-Unity Cloudで設定，Product＞Unity Ads Monetizationを選択
-
-
-
 ## 課金機能の実装
 
 広告を非表示にする課金をコードレスで実装していきます。
