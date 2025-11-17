@@ -4,7 +4,7 @@
 - https://hirokuma.blog/?p=4454
 - https://note.com/08_14/n/nf68b3985784e
 - https://developers.wonderpla.net/entry/2021/10/14/151132
-- 
+- https://qiita.com/ckm/items/b8cf23ba4bd0ae5bbf34
 
 ## 概要
 1. はじめに
@@ -59,7 +59,7 @@ AndroidはStoreの初期設定で，Androidのバージョンが10以上のも�
 - ストア検証サーバ：レシートが本物か検証するためのApple/Googleが提供するサーバ
 
 <div align="center">
-  <img src="images/kakinimages/1.png" alt="サーバ保存">
+  <img src="images/kakinimages/6.png" alt="サーバ保存">
 </div>
 
 メリット：
@@ -107,6 +107,170 @@ AndroidはStoreの初期設定で，Androidのバージョンが10以上のも�
 商品付与の結果を返します
 - 3b-9. ConfirmPendingPurchaseの呼び出し：
 IStoreController.ConfirmPendingPurchaseを呼び出し、ストアトランザクションを完了させます
+
+### 5.1ストアレシート認証の実装
+MyServerを立ち上げる必要があります．
+
+検証はレシートを受け取ったアプリの中で行うことも可能で、その方法が公式に紹介されてはいます．ただしユーザの手元にあるアプリ内での検証は、リバースエンジニアリングや通信への中間者攻撃等による不正の可能性を排しきれません。そのため、いずれのストアでもバックエンドサーバーでの検証が推奨されています．
+
+Androidとiosともに検証すべき観点は一緒．
+1. 正式なレシートか（ストアの発行したレシートか）
+2. 自身のアプリのレシートか
+3. 未登録のレシートか
+
+### ios
+ストアがAPIとして公開しています．
+https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
+
+このAPIは本番環境用とサンドボックス(テスト)環境の二つ分かれており，以下のjsonオブジェクトをボディとしてPOSTリクエストして利用します．
+~~~
+{
+  "receipt-data": "アプリから受信したBase64エンコードされたレシートデータ",
+  "password": "アプリの共有シークレット", //reciept-dataが、定期購読のレシートを含む場合のみ必須
+  "exclude-old-transactions": true //trueを指定すると、購読の最新レシート1件だけをレスポンスに含めてくれる
+}
+~~~
+
+審査期間中にAppleがサンドボックス環境のレシートを送信してくるため、「開発時はサンドボックス環境、本番運用時は本番環境用」と設定を切り替えるのではなく、実装としていずれのAPIにもリクエストできるようにしておく必要があります．
+
+戻り値として以下のJSON形式のレスポンスが得られます．
+
+~~~
+{
+  "status": 0,  //リクエストの結果を表すコード値
+  "receipt": {
+    "bundle_id": "jp.example.app", //アプリのID
+    "in_app": [
+      {
+        "transaction_id": "1111111111111111", //その1回の購入を一意に識別するためのID 
+        "product_id": "jp.example.app.subscription", //購入したアイテムのID
+        "purchase_date": "2018-12-11 08:08:50 Etc/GMT", //購入日時（※）
+        "expires_date": "2018-12-11 08:08:55 Etc/GMT" //有効期限
+      },
+    ]
+  }, 
+  "latest_receipt_info": [
+      {
+        "product_id": "", 
+        "transaction_id": "",
+        "purchase_date": "",
+        "expires_date": ""
+      },
+  ], 
+  "latest_receipt": "MII...", //Base64エンコードされたレシートデータ。省略しているが、実際は10KB前後の文字列
+  "pending_renewal_info": [
+    {
+      "auto_renew_status": "1", //今の購読が有効期限を迎えた際、自動更新されるか否かを表す値
+      "is_in_billing_retry_period": "1" //更新に失敗している購読で、ストアがなお更新を試みているかを表す値
+    }
+  ]
+}
+
+~~~
+
+1. 正当なレシートか
+
+レシートの正当性は、アプリから受け取ったレシートをパラメータとしてAPIにリクエストし、戻り値の項目statusの値で確認します．
+
+| 値 | 説明|
+| ---- | ---- |
+| 0 | 送信したレシートが有効である。 |
+| 21007 | 	送信したレシートはサンドボックス環境のものなので、そちらのAPIを呼び直す。 |
+| 他 | 	全量は 公式 を参照。ストアAPIの一時的不具合を表すものもあるが、多くは入力値の不正を示す。 |
+
+2. 自身のアプリのレシートか
+
+自アプリのレシートかは、戻り値の項目receipt:bundle_idで確認します。この値がアプリのCFBundleIdentifierと一致すればOKです。
+
+3. 未登録のレシートか
+
+戻り値に含まれる複数のレシートから最新のもの1つを抽出し、それがサーバーに登録済みか否かを確認します。
+
+## Android
+iOS同様に、先にストアが公開しているAPIの使い方を確認しておきます.
+
+GooglePlayのAPIはOAuth 2.0に沿って認可の仕組みを敷いているため、①アクセストークンを取得②取得したトークンを用いて検証のためのAPIにリクエスト、の2ステップで利用します。
+
+①アクセストークンの取得
+
+最初の利用の場合、アプリを公開するGoogleアカウントからリフレッシュトークンを払い出してもらう必要があります。
+以下のパラメータで https://accounts.google.com/o/oauth2/token にPOSTリクエストを送信します。
+~~~
+grant_type=refresh_token
+client_id=<アカウントのAPIコンソールで生成したクライアントID>
+client_secret=<IDに付随するシークレット>
+refresh_token=<リフレッシュトークン>
+~~~
+
+grant_typeは"refresh_token"の固定文字列です。
+リクエストに成功すると、JSON形式のレスポンスでアクセストークンとその有効期限が返却されます。
+~~~
+{
+  "access_token" : "ya29.AHES3ZQ_MbZCwac9TBWIbjW5ilJkXvLTeSl530Na2",
+  "token_type" : "Bearer",
+  "expires_in" : 3600,
+}
+~~~
+
+②APIのリクエスト
+
+次のエンドポイントにGETリクエストを送信します。iOSとは異なり、環境に依らず同じです。
+
+*https://www.googleapis.com/androidpublisher/v3/applications/packageName/purchases/subscriptions/subscriptionId/tokens/*token
+
+| パスパラメータ | 説明|
+| ---- | ---- |
+| packageName | アプリのパッケージ名 |
+| subscriptionID | 	アイテム名 |
+| token | アイテム購入時に、端末がストアから受け取るトークン文字列 |
+
+| クエリパラメータ | 説明|
+| ---- | ---- |
+| access_token | 全ステップで発行したアクセストークン |
+
+リクエストに成功すると、以下のJSON形式のレスポンスが得られます。iOS同様に直近の説明で必要な項目以外は省略しているため、取り上げられなかった項目は 公式 で確認してください。
+~~~
+{
+  "startTimeMillis": 1544515730000,  //購読の開始日時（エポックミリ秒）
+  "expiryTimeMillis": 1544516030000, //購読の有効期限
+  "autoRenewing": true, //今の購読が有効期限を迎えた際、自動更新されるか否かを表す値
+  "developerPayload": "free-text", //アプリから購入を行う際に、個別に指定して埋め込める文字列（※）
+  "orderId": "GPA.1111-1111-1111-11111", //その1回の購入を一意に識別するためのID（※※）
+  "purchaseType": 0 //サンドボックス環境の時のみ存在し、0を示す
+}
+~~~
+
+1. 正当なレシートか
+
+アプリはアイテムの購入時、レシートと同時にその署名をストアから受け取っています。サーバーにそのRSA公開鍵を登録しておき、そのセットをSHA-1で検証することでレシートの正当性を担保できます。
+Android Developers - Embed your public key for licensing
+
+なお、アプリが購入時に受け取るレシートは以下の内容です。（実際には改行やインデントは含まれません）
+~~~
+{
+  "orderId":"GPA.1111-1111-1111-11111",
+  "packageName":"jp.example.app", //アプリを一意に特定できる名前
+  "productId":"example", //購入したアイテムのID
+  "purchaseTime":1544515730000,
+  "purchaseState":0,
+  "purchaseToken":"xxx...", //ストアのAPIを利用するためのトークン
+  "autoRenewing":true
+}
+~~~
+
+2. 自身のアプリのレシートか
+
+前ステップで検証したレシートから項目packageName,productId,purchaseTokenを取得し、先述のAPIにリクエストします。そのHTTPステータスコードが 200(OK) であれば、そのレシートは自身のアプリのものです。
+
+3つの項目のセットに対して保持するアクセストークンが適切でない場合、すなわちレシートが自アプリのものではない場合は 400(Bad Request) が返却されます。
+アプリのパッケージ名であるpackageNameは不変かつ共通なので、設定値として保持しておいてもよいでしょう。すると他アプリのレシートが送られてきた場合に3つの項目のセット間で不整合が発生し得ますが、その場合もAPIは400を返し、メッセージとしてどこに不整合があるかを教えてくれます。
+
+3. 未登録のレシートか
+
+APIの戻り値の項目orderIdが各購入の識別子です。これと同じ値を持つレシートがDBに登録されていなければ、そのレシートの検証は成功です。
+検証済みのレシートとしてDBに保存する際は、アプリから送られてきたレシートとストアのAPIの戻り値を合算して1つのレシートとして保存するようにします。特にproductId,purchaseTokenの値は今後もストアのAPIを利用するのに必須であり、紛失すると何もできなくなってしまいます。
+
+App(検証情報の送信)⇒MyServer(APIリクエストストアサーバに)⇒ストアサーバ
 
 ## 6.サーバレス(ローカル)認証
 UnityIAPの機能にあるCrossPlatformValidatorを使用するローカルの認証．
